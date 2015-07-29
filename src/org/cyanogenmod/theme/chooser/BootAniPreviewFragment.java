@@ -128,7 +128,15 @@ public class BootAniPreviewFragment extends Fragment {
             ZipFile zip = null;
             if (ThemeConfig.SYSTEM_DEFAULT.equals(mPkgName)) {
                 try {
-                    zip = new ZipFile(new File(BootAnimationHelper.SYSTEM_BOOT_ANI_PATH));
+                    File cmAnim = new File(BootAnimationHelper.CM_BOOT_ANI_PATH);
+                    File aospAnim = new File(BootAnimationHelper.AOSP_BOOT_ANI_PATH);
+                    if (aospAnim.exists()) {
+                        zip = new ZipFile(aospAnim);
+                    } else if (cmAnim.exists()) {
+                        zip = new ZipFile(cmAnim);
+                    } else {
+                        zip = new ZipFile(new File(BootAnimationHelper.EXODUS_BOOT_ANI_PATH));
+                    }
                 } catch (Exception e) {
                     Log.w(TAG, "Unable to load boot animation", e);
                     return Boolean.FALSE;

@@ -26,6 +26,7 @@ import android.widget.ImageView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +42,9 @@ import java.util.zip.ZipInputStream;
 public class BootAnimationHelper {
     public static final String THEME_INTERNAL_BOOT_ANI_PATH =
             "assets/bootanimation/bootanimation.zip";
-    public static final String SYSTEM_BOOT_ANI_PATH = "/system/media/bootanimation.zip";
+    public static final String EXODUS_BOOT_ANI_PATH = "/system/media/bootanimation.zip";
+    public static final String CM_BOOT_ANI_PATH = "/data/system/theme/bootanimation-cm.zip";
+    public static final String AOSP_BOOT_ANI_PATH = "/data/system/theme/bootanimation-aosp.zip";
 
     public static class AnimationPart {
         /**
@@ -209,10 +212,24 @@ public class BootAnimationHelper {
             // this is ugly, ugly, ugly.  Did I mention this is ugly?
             try {
                 if (ThemeConfig.SYSTEM_DEFAULT.equals(path)) {
-                    previewName = getPreviewFrameEntryName(
-                            new FileInputStream(SYSTEM_BOOT_ANI_PATH));
-                    bitmap = loadPreviewFrame(
-                            context, new FileInputStream(SYSTEM_BOOT_ANI_PATH), previewName);
+                    File cmAnim = new File(CM_BOOT_ANI_PATH);
+                    File aospAnim = new File(AOSP_BOOT_ANI_PATH);
+                    if (aospAnim.exists()) {
+                        previewName = getPreviewFrameEntryName(
+                                new FileInputStream(AOSP_BOOT_ANI_PATH));
+                        bitmap = loadPreviewFrame(
+                                context, new FileInputStream(AOSP_BOOT_ANI_PATH), previewName);
+                    } else if (cmAnim.exists()) {
+                        previewName = getPreviewFrameEntryName(
+                                new FileInputStream(CM_BOOT_ANI_PATH));
+                        bitmap = loadPreviewFrame(
+                                context, new FileInputStream(CM_BOOT_ANI_PATH), previewName);
+                    } else {
+                        previewName = getPreviewFrameEntryName(
+                                new FileInputStream(EXODUS_BOOT_ANI_PATH));
+                        bitmap = loadPreviewFrame(
+                                context, new FileInputStream(EXODUS_BOOT_ANI_PATH), previewName);
+                    }
                 } else {
                     final Context themeCtx = context.createPackageContext(path, 0);
                     previewName = getPreviewFrameEntryName(
